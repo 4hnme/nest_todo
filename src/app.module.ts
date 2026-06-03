@@ -23,10 +23,9 @@ const port = (psql_port === undefined || isNaN(Number(psql_port))) ? 5432 : Numb
       entities: [Task],
       synchronize: false,
     }),
-    GuardModule,
   ],
   controllers: [AppController],
-  providers: [Logger, AppService],
+  providers: [AppService],
 })
 
 export class AppModule {
