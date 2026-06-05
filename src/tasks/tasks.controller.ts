@@ -3,42 +3,50 @@ import {
   Get,
   Post,
   Body,
+  Request,
   Patch,
   Param,
   Delete,
+  UseGuards,
   ParseIntPipe,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { JwtGuard } from '../auth/jwt/jwt.guard';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
+  @UseGuards(JwtGuard)
+  create(@Body() createTaskDto: CreateTaskDto, @Request() req) {
+    return this.tasksService.create(createTaskDto, req.user);
   }
 
   @Get()
-  findAll() {
-    return this.tasksService.findAll();
+  @UseGuards(JwtGuard)
+  findAll(@Request() req) {
+    return this.tasksService.findAll(req.user);
   }
 
   // TODO: we need to somehow add logging to the ParseIntPipe. create a custom validator?
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.tasksService.findOne(id);
+  @UseGuards(JwtGuard)
+  findOne(@Param('id', ParseIntPipe) id: number, @Request() req) {
+    return this.tasksService.findOne(id, req.user);
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.tasksService.update(id, updateTaskDto);
+  @UseGuards(JwtGuard)
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateTaskDto: UpdateTaskDto, @Request() req) {
+    return this.tasksService.update(id, updateTaskDto, req.user);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.tasksService.remove(id);
+  @UseGuards(JwtGuard)
+  remove(@Param('id', ParseIntPipe) id: number, @Request() req) {
+    return this.tasksService.remove(id, req.user);
   }
 }

@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, Request, NotFoundException, Logger, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm'
 import { Task } from './entities/task.entity'
+import { User } from '../users/entities/user.entity'
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { JwtGuard } from '../auth/jwt/jwt.guard';
 
 const checkExistance = false;
 
@@ -26,27 +28,31 @@ export class TasksService {
     }
   }
 
-  async create(createTaskDto: CreateTaskDto) {
-    const task = await this.tasksRepository.create({ ...createTaskDto });
+  async create(createTaskDto: CreateTaskDto, user: User) {
+    const task = await this.tasksRepository.create({ username: user.username, ...createTaskDto });
     return this.tasksRepository.save(task);
   }
 
-  async findAll() {
-    return this.tasksRepository.find();
+  async findAll(user: User) {
+    const username = user.username;
+    return this.tasksRepository.find({where: { username }});
   }
 
-  async findOne(id: number) {
+  // TODO: add User to here
+  async findOne(id: number, user: User) {
     await this.existsOrFail(id);
-    return this.tasksRepository.findOneBy({ id });
+    const username = user.username;
+    return this.tasksRepository.find({where: { id, username }});
   }
 
-  async update(id: number, updateTaskDto: UpdateTaskDto) {
+  async update(id: number, updateTaskDto: UpdateTaskDto, user: User) {
     await this.existsOrFail(id);
     await this.tasksRepository.update(id, updateTaskDto);
-    return this.findOne(id);
+    return this.findOne(id, user);
   }
 
-  async remove(id: number) {
+  // TODO: this for now doesn't check for user validity ¯\_(ツ)_/¯
+  async remove(id: number, user: User) {
     await this.existsOrFail(id);
     return this.tasksRepository.delete(id);
   }

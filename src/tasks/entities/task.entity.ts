@@ -8,6 +8,9 @@ export class Task {
   @Column({ type: 'text' })
   description: string;
 
+  @Column({ type: 'text', default: 'admin' })
+  username: string;
+
   @Column({ type: 'boolean', default: false })
   done: boolean;
 

@@ -1,4 +1,5 @@
-import { Task } from './tasks/entities/task.entity'
+import { Task } from './tasks/entities/task.entity';
+import { User } from './users/entities/user.entity';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 const psql_port = process.env.POSTGRES_PORT;
@@ -11,6 +12,6 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
     username: process.env.POSTGRES_USER ?? 'dev',
     password: process.env.POSTGRES_PASSWORD ?? 'dev',
     database: process.env.POSTGRES_DB ?? 'psql_tasks',
-    entities: [Task],
+    entities: [User, Task],
     synchronize: false,
 };

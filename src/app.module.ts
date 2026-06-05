@@ -7,11 +7,15 @@ import { AppService } from './app.service';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { Task } from './tasks/entities/task.entity';
 import { typeOrmConfig } from './typeorm.config';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     TasksModule,
     TypeOrmModule.forRoot(typeOrmConfig),
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
