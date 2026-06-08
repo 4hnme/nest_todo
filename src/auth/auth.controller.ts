@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Request, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService, AccessToken } from './auth.service';
 import { LocalGuard } from './local/local.guard';
 import { User } from '../users/entities/user.entity';
 import { AuthResponseDto, LoginDto } from './auth.dto';
@@ -29,7 +29,7 @@ export class AuthController {
   @ApiOkResponse({ description: 'jwt access token', type: AuthResponseDto })
   @UseGuards(LocalGuard)
   @Post()
-  async login(@Request() req) {
+  async login(@Request() req): Promise<AccessToken> {
     return this.authService.login(req.user);
   }
 }

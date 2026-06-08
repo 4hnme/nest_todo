@@ -25,6 +25,7 @@ import {
   ApiUnauthorizedResponse,
   ApiBadRequestResponse
 } from '@nestjs/swagger';
+import { DeleteResult } from 'typeorm';
 
 @ApiTags('tasks')
 @ApiBearerAuth()
@@ -38,7 +39,7 @@ export class TasksController {
   @ApiBadRequestResponse({ description: 'Bad Request'})
   @Post()
   @UseGuards(JwtGuard)
-  create(@Body() createTaskDto: CreateTaskDto, @Request() req) {
+  async create(@Body() createTaskDto: CreateTaskDto, @Request() req): Promise<Task> {
     return this.tasksService.create(createTaskDto, req.user);
   }
 
@@ -48,7 +49,7 @@ export class TasksController {
   @ApiBadRequestResponse({ description: 'Bad Request'})
   @Get()
   @UseGuards(JwtGuard)
-  findAll(@Request() req) {
+  async findAll(@Request() req): Promise<Task[]> {
     return this.tasksService.findAll(req.user);
   }
 
@@ -60,7 +61,7 @@ export class TasksController {
   @ApiBadRequestResponse({ description: 'Bad Request'})
   @Get(':id')
   @UseGuards(JwtGuard)
-  findOne(@Param('id', ParseIntPipe) id: number, @Request() req) {
+  async findOne(@Param('id', ParseIntPipe) id: number, @Request() req): Promise<Task> {
     return this.tasksService.findOne(id, req.user);
   }
 
@@ -71,7 +72,7 @@ export class TasksController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Patch(':id')
   @UseGuards(JwtGuard)
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateTaskDto: UpdateTaskDto, @Request() req) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateTaskDto: UpdateTaskDto, @Request() req): Promise<Task> {
     return this.tasksService.update(id, updateTaskDto, req.user);
   }
 
@@ -82,7 +83,7 @@ export class TasksController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Delete(':id')
   @UseGuards(JwtGuard)
-  remove(@Param('id', ParseIntPipe) id: number, @Request() req) {
+  async remove(@Param('id', ParseIntPipe) id: number, @Request() req): Promise<DeleteResult> {
     return this.tasksService.remove(id, req.user);
   }
 }
